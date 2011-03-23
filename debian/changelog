@@ -1,0 +1,143 @@
+dbf2mysql (1.14a-3.1build1) lucid; urgency=low
+
+  * Rebuild for libmysqlclient transition.
+
+ -- Chuck Short <zulcss@ubuntu.com>  Tue, 06 Apr 2010 08:50:29 -0400
+
+dbf2mysql (1.14a-3.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Rebuild against libmysqlclient15-dev; libmysqlclient10-dev hasn't been
+    dropped yet, but hopefully will be for etch.  Closes: #343768.
+    - debian/patches/05_mysql_real_connect.dpatch: use mysql_real_connect(),
+      for libmysqlclient15 compatibility.
+
+ -- Steve Langasek <vorlon@debian.org>  Fri, 17 Feb 2006 16:52:25 -0800
+
+dbf2mysql (1.14a-3) unstable; urgency=low
+
+  * Policy updated to 3.6.1
+  * Patch applied for umlauts.
+    (closes: #213958,#213959)
+  * Using dpatch support now for current and past patches.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Tue,  7 Oct 2003 20:50:07 +0200
+
+dbf2mysql (1.14a-2) unstable; urgency=low
+
+  * Replaced mysql_connect with mysql_real_connect, SQLsock isn't used
+    anymore. (Bart Friederichs).
+  * README touched to reflect changes.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Mon, 24 Feb 2003 18:30:26 +0100
+
+dbf2mysql (1.14a-1) unstable; urgency=low
+
+  * Patch for FoxPro (Christian Eyrich):
+  	According to Erik Bachmanns XBase File Format Description all M Field
+  	Types (including DBF_MTYPE_FPT) contain the block number as 10 digita
+  	ASCII text. So handling it in DBF_MTYPE_FPT files as long value as the
+  	current versions of dbf2mysql do is wrong. What I experienced with the
+  	FoxPro files here confirm this.
+
+  * Patch for MySQL (Bart Friederichs):
+        I changed the dbf2mysql program to being able to enable the
+        local-infile option, that is needed for MySQL > 3.23.49 and >4.0.2. I
+        added an -L option to the command that enables it. It is tested and it
+        works. 
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Tue, 11 Feb 2003 14:47:22 +0100
+
+dbf2mysql (1.14-4) unstable; urgency=low
+
+  * Rebuilt to remove /usr/doc link
+  * Policy standard updated.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Wed, 11 Dec 2002 15:20:56 +0100
+
+dbf2mysql (1.14-3) unstable; urgency=low
+
+  * Maintainer email corrected in control file.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Mon, 26 Nov 2001 14:11:27 +0100
+
+dbf2mysql (1.14-2) unstable; urgency=low
+
+  * New maintainer. (closes: #93897)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Tue, 20 Nov 2001 12:25:53 +0100
+
+dbf2mysql (1.14-1) unstable; urgency=high
+
+  * New upstream version, with support for MEMO fields.  Closes: #23719.
+  * dbf2mysql.c: Open temporary file with O_EXCL.
+  * debian/dbf2mysql.1: Updated and converted from POD to plain man so
+    that it can be forwarded upstream.
+  * Switched to debhelper 3.
+  * Conforms to Standards version 3.5.6:
+    * debian/copyright: Added upstream URL.
+    * debian/rules: Support the `debug' build option.
+
+ -- Matej Vela <vela@debian.org>  Sun, 18 Nov 2001 21:45:13 +0100
+
+dbf2mysql (1.10d-3) unstable; urgency=high
+
+  * Maintainer set to Debian QA Group <packages@qa.debian.org>.
+  * Corrected the priority from extra to optional in
+    debian/control.
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Fri, 31 Aug 2001 23:43:44 +0200
+
+dbf2mysql (1.10d-2.0.1) unstable; urgency=low
+
+  * Non-maintainer upload
+  * recompile against current mysql packages to fix Depends: (closes: #43618)
+  * Add libmysql-dev to Build-Depends (closes: #78693)
+
+ -- Steve Langasek <vorlon@debian.org>  Sat, 24 Feb 2001 12:55:00 -0600
+
+dbf2mysql (1.10d-2) unstable; urgency=high
+
+  * if not for frozen, then at least for unstable ..
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Wed, 10 Feb 1999 02:26:53 +0100
+
+dbf2mysql (1.10d-1) frozen unstable; urgency=high
+
+  * re-upload, no changes beside including orig.tar.gz
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Mon, 21 Dec 1998 22:27:22 +0100
+
+dbf2mysql (1.10d-1) frozen unstable contrib; urgency=high
+
+  * new upstream
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Thu,  3 Dec 1998 19:22:25 +0100
+
+dbf2mysql (1.10b-3) stable contrib; urgency=high
+
+  * new compiled against the latest mysql libraries
+    (closes #28892)
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Wed,  2 Sep 1998 00:16:19 +0200
+
+dbf2mysql (1.10b-2) contrib; urgency=low
+
+  * changed the distribution to only contrib ...
+    [Do I ever understand this???]
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Tue, 7 Oct 1997 01:06:43 +0200
+
+dbf2mysql (1.10b-1) unstable contrib; urgency=low
+
+  * moved to contrib distribution, since it depends
+    on non-free mysql (bug ????, Martin Schulze)
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Mon, 6 Oct 1997 22:38:17 +0200
+
+dbf2mysql (1.10b-0) unstable; urgency=low
+
+  * Initial Debian release
+  * Manpage added
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Fri, 1 Aug 1997 09:56:45 +0200

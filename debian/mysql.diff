@@ -1,0 +1,174 @@
+--- ../../dbf2mysql-1.14/dbf2mysql.c	2002-12-19 10:34:13.000000000 +0100
++++ /tmp/dbf2mysql.c	2003-02-24 18:23:44.000000000 +0100
+@@ -9,10 +9,13 @@
+    Fixxed Quick mode insert for blank Numeric fields
+    Modified to use -x flag to add _rec and _timestamp fields to start of record.
+       ( only those lines immediately affect by if(express) (and getopt) )
++
++   Bart Friederichs <bart@friesoft.nl> feb 2003
++   Added MYSQL_OPT_LOCAL_INFILE to options for compatibility with 
++   	MySQL >3.23.49 and >4.0.2, new option -L enables it
++   Replaced mysql_connect with mysql_real_connect, SQLsock isn't used anymore
+ */
+ #include <stdio.h>
+-#include <sys/types.h>
+-#include <sys/stat.h>
+ #include <fcntl.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+@@ -22,7 +25,7 @@
+ #include "dbf.h"
+ 
+ int	verbose=0, upper=0, lower=0, create=0, fieldlow=0, var_chars=1;
+-int	express=0;
++int	express=0, enable_local=0;
+ int	null_fields=0, trim=0, quick=0;
+ char	primary[11];
+ char	*host = NULL;
+@@ -81,7 +84,7 @@
+ 		printf("dbf2mysql %s\n", VERSION);
+ 		printf("usage: dbf2mysql [-h hostname] [-d dbase] [-t table] [-p primary key]\n");
+ 		printf("                 [-o field[,field]] [-s oldname=newname[,oldname=newname]]\n");
+-		printf("                 [-i field[,field]] [-c] [-f] [-F] [-n] [-r] [-u|-l] \n"); 
++		printf("                 [-i field[,field]] [-c] [-f] [-F] [-n] [-r] [-u|-l] [-L]\n"); 
+ 		printf("                 [-v[v]] [-x] [-q]  [-P password] [-U user] dbf-file\n");
+ }
+ 
+@@ -398,8 +401,7 @@
+ 	else  /* if specified -q create file for 'LOAD DATA' */
+ 	{
+ 	    datafile = tempnam ("/tmp", "d2my");
+-	    tempfile = fdopen (open (datafile, O_WRONLY | O_CREAT | O_EXCL,
+-				     0600), "wt");
++	    tempfile = fopen (datafile, "wt");
+ 	    if (tempfile == NULL || datafile == NULL)
+ 	    {
+ 		fprintf (stderr, "Cannot open file '%s' for writing\n", datafile);
+@@ -578,7 +580,7 @@
+ 	}
+ 	if (mysql_query(SQLsock, query) == -1) {
+ 	    fprintf(stderr,
+-	  	    "Error sending LOAD DATA INFILE from file '%s'\n", datafile);
++	  	    "Error sending LOAD DATA LOCAL INFILE from file '%s'\n", datafile);
+ 	    fprintf(stderr,
+ 		    "Detailed report: %s\n",
+ 		    mysql_error(SQLsock));
+@@ -594,7 +596,7 @@
+ int main(int argc, char **argv)
+ {
+ 	int 		i;
+-	MYSQL		*SQLsock,mysql;
++	MYSQL		mysql;
+ 	extern int 	optind;
+ 	extern char	*optarg;
+ 	char		*query;
+@@ -602,7 +604,7 @@
+ 
+ 	primary[0] = '\0';
+ 
+-	while ((i = getopt(argc, argv, "xqfFrne:lucvi:h:p:d:t:s:o:U:P:")) != EOF) {
++	while ((i = getopt(argc, argv, "xqLfFrne:lucvi:h:p:d:t:s:o:U:P:")) != EOF) {
+ 		switch (i) {
+ 		        case 'P':
+ 				pass = (char *)strdup(optarg);
+@@ -669,6 +671,9 @@
+ 			case 'o':
+ 				flist = (char *)strdup(optarg);
+ 				break;
++			case 'L':
++				enable_local = 1;
++				break;
+ 			case ':':
+ 				usage();
+ 				printf("missing argument!\n");
+@@ -707,6 +712,7 @@
+ 		       table);
+ 		printf("Number of records: %ld\n", dbh->db_records);
+ 	}
++
+ 	if (verbose > 1) {
+ 		printf("Name\t\t Length\tDisplay\t Type\n");
+ 		printf("-------------------------------------\n");
+@@ -723,7 +729,20 @@
+ 		printf("Making connection to MySQL-server\n");
+ 	}
+ 
+-	if (!(SQLsock = mysql_connect(&mysql,host,user,pass))) {
++	mysql_init(&mysql);
++
++	if (enable_local == 1) {
++		if (verbose) {
++			printf("Setting MySQL option MYSQL_OPT_LOCAL_INFILE\n");
++		}
++
++		if (mysql_options(&mysql, MYSQL_OPT_LOCAL_INFILE, 0)) {
++		    printf("Setting option not succeeded.");
++		    exit(1);
++		}
++	}
++
++	if (!mysql_real_connect(&mysql,host,user,pass, dbase, 0, NULL,0)) {
+ 		fprintf(stderr, "Couldn't get a connection with the ");
+ 		fprintf(stderr, "designated host!\n");
+ 		fprintf(stderr, "Detailed report: %s\n", mysql_error(&mysql));
+@@ -731,23 +750,12 @@
+ 		exit(1);
+ 	}
+ 
+-	if (verbose > 2) {
+-		printf("Selecting database '%s'\n", dbase);
+-	}
+-
+-	if ((mysql_select_db(SQLsock, dbase)) == -1) {
+-		fprintf(stderr, "Couldn't select database %s.\n", dbase);
+-		fprintf(stderr, "Detailed report: %s\n", mysql_error(SQLsock));
+-		mysql_close(SQLsock);
+-		dbf_close(&dbh);
+-		exit(1);
+-	}
+ /* Substitute field names */
+       do_onlyfields(flist, dbh);
+       do_substitute(subarg, dbh);
+ 
+ 	if (!create) {
+-		if (!check_table(SQLsock, table)) {
++		if (!check_table(&mysql, table)) {
+ 			printf("Table does not exist!\n");
+ 			exit(1);
+ 		}
+@@ -758,30 +766,30 @@
+ 
+ 		if (!(query = (char *)malloc(12 + strlen(table)))) {
+ 			printf("Memory-allocation error in main (drop)!\n");
+-			mysql_close(SQLsock);
++			mysql_close(&mysql);
+ 			dbf_close(&dbh);
+ 			exit(1);
+ 		}
+ 
+ 		sprintf(query, "DROP TABLE %s", table);
+-		mysql_query(SQLsock, query);
++		mysql_query(&mysql, query);
+ 		free(query);
+ 
+ /* Build a CREATE-clause
+ */
+-		do_create(SQLsock, table, dbh);
++		do_create(&mysql, table, dbh);
+ 	}
+ 
+ /* Build an INSERT-clause
+ */
+ 	if (create < 2)
+-	  do_inserts(SQLsock, table, dbh);
++	  do_inserts(&mysql, table, dbh);
+ 
+ 	if (verbose > 2) {
+ 		printf("Closing up....\n");
+ 	}
+ 
+-    mysql_close(SQLsock);
++    mysql_close(&mysql);
+     dbf_close(&dbh);
+     exit(0);
+ }

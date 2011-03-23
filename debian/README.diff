@@ -1,0 +1,12 @@
+--- ../../dbf2mysql-1.14/README	2000-07-08 02:08:03.000000000 +0200
++++ /tmp/README	2003-02-24 18:23:49.000000000 +0100
+@@ -84,6 +84,9 @@
+ 
+ -r  Trim trailing and leading whitspaces from CHAR type fields data
+ 
++-L  Enable LOAD DATA LOCAL INFILE, should be used with MySQL > 3.23.49 and
++    > 4.0.2
++
+ Rudimentary read-only support for Visual FoxPro, DB III+, and DB IV memo
+ fields/files has been added.
+ 

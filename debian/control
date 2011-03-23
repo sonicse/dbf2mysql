@@ -1,0 +1,13 @@
+Source: dbf2mysql
+Section: misc
+Priority: optional
+Maintainer: Francesco Paolo Lovergine <frankie@debian.org>
+Standards-Version: 3.6.1
+Build-Depends: debhelper (>= 3), dpatch, libmysqlclient-dev
+
+Package: dbf2mysql
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: xBase <--> MySQL
+ This program takes an xBase file and sends queries to an MySQL server to
+ insert it into an MySQL table and vice versa.

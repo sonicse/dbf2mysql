@@ -1,0 +1,38 @@
+#!/bin/sh -e
+## README.dpatch by Francesco Paolo Lovergine <frankie@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+@DPATCH@
+diff -urNad /home/frankie/debian/mypkgs/dbf2mysql/dbf2mysql-1.14a/README dbf2mysql-1.14a/README
+--- /home/frankie/debian/mypkgs/dbf2mysql/dbf2mysql-1.14a/README	2003-10-07 20:48:13.000000000 +0200
++++ dbf2mysql-1.14a/README	2003-10-07 20:48:43.000000000 +0200
+@@ -84,6 +84,9 @@
+ 
+ -r  Trim trailing and leading whitspaces from CHAR type fields data
+ 
++-L  Enable LOAD DATA LOCAL INFILE, should be used with MySQL > 3.23.49 and
++    > 4.0.2
++
+ Rudimentary read-only support for Visual FoxPro, DB III+, and DB IV memo
+ fields/files has been added.
+ 

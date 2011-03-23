@@ -1,0 +1,181 @@
+.TH DBF2MYSQL 1 "2001-11-18" "Debian Project"
+
+.SH NAME
+dbf2mysql, mysql2dbf \- convert between xBase and MySQL databases
+
+.SH SYNOPSIS
+.B dbf2mysql
+.RB [ -v [ v ]]
+.RB [ -f ]
+.RB [ -u | -l ]
+.RB [ -n ]
+.RB [ -o
+.IR field [, field ]]
+.RB [ -e
+.IR conversion-file ]
+.RB [ -s
+.IR old-name = new-name [,\c
+.IR old-name = new-name ]]
+.RB [ -i
+.IR field [, field ]]
+.RB [ -d
+.IR database ]
+.RB [ -t
+.IR table ]
+.RB [ -c [ c ]]
+.RB [ -p
+.IR primary ]
+.RB [ -h
+.IR host ]
+.RB [ -F ]
+.RB [ -q ]
+.RB [ -r ]
+.RB [ -x ]
+.RB [ -P
+.IR password ]
+.RB [ -U
+.IR user ]
+.I dbf-file
+.PP
+.B mysql2dbf
+.RB [ -v [ v ]]
+.RB [ -u | -l ]
+.B -d
+.I database
+.B -t
+.I table
+.RB [ -h
+.IR host ]
+.RB [ -q
+.IR query ]
+.RB [ -P
+.IR password ]
+.RB [ -U
+.IR user ]
+.I dbf-file
+
+.SH DESCRIPTION
+.B dbf2mysql
+takes an xBase file and sends queries to an MySQL server to insert it
+into an MySQL table.
+.PP
+.B mysql2dbf
+dumps a MySQL table to a dbf file.
+
+.SH OPTIONS
+.TP
+.B -v
+Produce some status output.
+.TP
+.B -vv
+More verbose.
+.TP
+.B -vvv
+Even more verbose: produce a progress report.
+.TP
+.B -f
+Translate all field names in the xBase file to lowercase.
+.TP
+.B -u
+Translate all text in the xBase file to uppercase.
+.TP
+.B -l
+Translate all text in the xBase file to lowercase.
+.TP
+.B -n
+Allow NULL fields: 'NOT NULL' will be not added in table creation
+statement.
+.TP
+.BI -o " field\fR[,\fPfield\fR[,...]]"
+List fields to insert into MySQL database.  Primary use is to ease
+import of complex dbf files where we want only few fields.  NOTE:
+.B -o
+is processed before substitution
+.RB ( -s ),
+so you have to use dbf field names here.
+.TP
+.BI -e " conversion-file"
+Specify file for CHAR fields conversion.  File format is:
+1st line: number of characters to convert (number of lines).
+Further lines: <char_to_convert> <char_after_conversion>.
+.TP
+.BI -s " old-name\fR=\fPnew-name\fR[,\fPold-name\fR=\fPnew-name\fR[,...]]"
+Takes a list of field name/new field name pairs.  Primary use is to
+avoid conflicts between field names and MySQL reserved keywords.  When
+the new field name is empty, the field is skipped in both the CREATE
+clause and the INSERT clauses, i.e. it will not be present in the MySQL
+table.  For example:
+.IP
+.nf
+-s ORDER=HORDER,REMARKS=,STAT1=STATUS1
+.fi
+.TP
+.BI -i " field\fR[,\fPfield\fR[,...]]"
+List fields to be indexed.  MySQL field names should be used here.
+.TP
+.BI -d " database"
+Select the database to insert into.  Default is 'test'.
+.TP
+.BI -t " table"
+Select the table to insert into.  Default is 'test'.
+.TP
+.BR -c [ c ]
+Create table if one doesn't exist already.  If the table already exists,
+drop it and build a new one.  The default is to insert all data into the
+named table.  If
+.B -cc
+is specified, no records will be inserted.
+.TP
+.B -p " primary"
+Select the primary key.  You have to give the exact field name.
+.TP
+.BI -h " host"
+Select the host to insert into.  Untested.
+.TP
+.B -F
+Fixed length records.  (By default CHAR is saved as VARCHAR.)
+.TP
+.B -q
+.BR dbf2mysql :
+"Quick" mode.  Inserts data via temporary file using 'LOAD DATA INFILE'
+MySQL statement.  This increased insertion speed on my PC 2-2.5 times.
+Also note that during whole 'LOAD DATA' affected table is locked.
+.IP
+.BR mysql2dbf :
+Specify custom query to use.
+.TP
+.B -r
+Trim trailing and leading whitespace from CHAR type fields data.
+.TP
+.B -x
+Start each table with _rec and _timestamp fields.
+.TP
+.BI -P " password"
+Specify password on the MySQL server.
+.TP
+.BI -U " user"
+Specify user on the MySQL server.
+.SH BUGS
+.B mysql2dbf
+can't write MEMO files at this time.
+.PP
+Possibly incorrect field lengths for REAL numbers.
+
+.SH AUTHORS
+Originally written by Maarten Boekhold <boekhold@cindy.et.tudelft.nl>,
+Oct 1995.
+.PP
+Patched for MySQL by Michael Widenius <monty@analytikerna.se>,
+3 Nov 1996.
+.PP
+Manual page written for Debian GNU/Linux from README by
+Heiko Schlittermann <heiko@lotte.sax.de>, Aug 1997; updated by
+Matej Vela <vela@debian.org>, Nov 2001.
+
+.SH COPYRIGHT
+Use this piece of software as you want, modify it to suit your needs,
+but please leave my name in place ok? :)
+
+.SH DISCLAIMER
+The authors do not accept any responsibility for possible damage you get
+as result of using this program.

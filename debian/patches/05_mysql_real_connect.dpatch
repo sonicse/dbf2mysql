@@ -1,0 +1,39 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 05_mysql_real_connect.dpatch by Steve Langasek <vorlon@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: switch from using mysql_connect to mysql_real_connect, for MySQL 5.0
+## DP: compatibility
+
+@DPATCH@
+
+--- dbf2mysql-1.14a.orig/mysql2dbf.c
++++ dbf2mysql-1.14a/mysql2dbf.c
+@@ -47,7 +47,7 @@
+ 
+ int main(int argc, char **argv) {
+ 	int             i;
+-	MYSQL		*SQLsock,mysql;
++	MYSQL		*SQLsock;
+ 	extern int      optind;
+ 	extern char     *optarg;
+ 	char            *query = NULL;
+@@ -148,10 +148,16 @@
+ 		printf("Making connection with mySQL-server\n");
+ 	}
+ 
+-    if (!(SQLsock = mysql_connect(&mysql,host,user,pass))) {
++    if (!(SQLsock = mysql_init(NULL))) {
++	fprintf(stderr, "Couldn't initialize MySQL handle.\n");
++        close(dbh->db_fd);
++        free(dbh);
++        exit(1);
++    }
++    if (!mysql_real_connect(SQLsock,host,user,pass,NULL,0,NULL,0)) {
+         fprintf(stderr, "Couldn't get a connection with the ");
+         fprintf(stderr, "designated host!\n");
+-        fprintf(stderr, "Detailed report: %s\n", mysql_error(&mysql));
++        fprintf(stderr, "Detailed report: %s\n", mysql_error(SQLsock));
+         close(dbh->db_fd);
+         free(dbh);
+         exit(1);

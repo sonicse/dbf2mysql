@@ -1,0 +1,11 @@
+--- dbf2mysql-1.14-4/dbf.c	Sat Jul  8 02:19:51 2000
++++ dbf.c	Mon Feb  3 13:47:16 2003
+@@ -570,8 +570,6 @@
+ 	    switch(dbh->db_memo)
+ 	    {
+ 	      case DBF_MTYPE_FPT:
+-		blknum = get_long(dbffield);
+-		break;
+ 	      case DBF_MTYPE_DBT3:
+ 	      case DBF_MTYPE_DBT4:
+ 		strncpy(fields[t].db_contents, (char *)dbffield, fields[t].db_flen);

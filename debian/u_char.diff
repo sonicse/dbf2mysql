@@ -1,0 +1,29 @@
+--- dbf.c~	Sat Jul  8 02:19:51 2000
++++ dbf.c	Thu Sep 19 12:41:49 2002
+@@ -513,7 +513,7 @@
+ {
+     int     	t, i;
+     u_char  	*dbffield;
+-    char	*end, *sp;
++    u_char	*end, *sp;
+     double	dblval;
+     long long	int8val;
+     long	int4val;
+@@ -549,7 +549,7 @@
+     {
+ 	switch(fields[t].db_type) {
+ 	  case 'C':		/* Character data */
+-	    end = (char *)&dbffield[fields[t].db_flen - 1];
++	    end = &dbffield[fields[t].db_flen - 1];
+ 	    i = fields[t].db_flen;
+ 	    while (( i > 0) && ((*end < 0x21)/* || (*end > 0x7E)*/)) {
+ 		end--;
+@@ -659,7 +670,7 @@
+ 	    break;
+ 
+ 	  default:
+-	    end = (char *)dbffield;
++	    end = dbffield;
+ 	    i = fields[t].db_flen;
+ 	    while (( i > 0) && ((*end < 0x21)/* || (*end > 0x7E)*/)) {
+ 		end++;

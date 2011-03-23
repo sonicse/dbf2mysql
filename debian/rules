@@ -1,0 +1,97 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# This file is public domain software, originally written by Joey Hess. 
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# This is the debhelper compatibility version to use.
+export DH_COMPAT=3
+
+CFLAGS=-O2 -Wall
+ifneq ($(findstring debug,$(DEB_BUILD_OPTIONS)),)
+CFLAGS+=-g
+endif
+
+include /usr/share/dpatch/dpatch.make
+
+build: build-stamp
+build-stamp: patch-stamp
+	dh_testdir
+
+	# Patching
+	
+#	patch <debian/foxpro.diff
+#	patch <debian/mysql.diff
+#	patch <debian/README.diff
+#	patch <debian/u_char.diff
+	
+	# Add here commands to compile the package.
+	$(MAKE) CFLAGS="$(CFLAGS)" MYSQLLIB= STRIP=
+
+	touch build-stamp
+
+clean: myclean unpatch
+myclean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+
+	# Add here commands to clean up after the build process.
+	-$(MAKE) clean
+
+
+	# Reversing patches
+	 
+#	-patch --reverse <debian/README.diff
+#	-patch --reverse <debian/mysql.diff
+#	-patch --reverse <debian/foxpro.diff
+#	-patch --reverse <debian/u_char.diff
+
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs usr/bin
+
+	# Add here commands to install the package into debian/<packagename>
+	install dbf2mysql mysql2dbf debian/dbf2mysql/usr/bin
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+#	dh_installdebconf	
+	dh_installdocs README
+	dh_installexamples
+	dh_installmenu
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_installinit
+	dh_installcron
+	dh_installman debian/dbf2mysql.1
+	dh_installinfo
+#	dh_undocumented
+	dh_installchangelogs
+	dh_link usr/share/man/man1/dbf2mysql.1 usr/share/man/man1/mysql2dbf.1
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_makeshlibs
+	dh_installdeb
+#	dh_perl
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install patch unpatch myclean

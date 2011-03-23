@@ -1,0 +1,37 @@
+#!/bin/sh -e
+## foxpro.dpatch by Francesco Paolo Lovergine <frankie@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+@DPATCH@
+diff -urNad /home/frankie/debian/mypkgs/dbf2mysql/dbf2mysql-1.14a/dbf.c dbf2mysql-1.14a/dbf.c
+--- /home/frankie/debian/mypkgs/dbf2mysql/dbf2mysql-1.14a/dbf.c	2003-10-07 20:40:57.000000000 +0200
++++ dbf2mysql-1.14a/dbf.c	2003-10-07 20:41:29.000000000 +0200
+@@ -570,8 +570,6 @@
+ 	    switch(dbh->db_memo)
+ 	    {
+ 	      case DBF_MTYPE_FPT:
+-		blknum = get_long(dbffield);
+-		break;
+ 	      case DBF_MTYPE_DBT3:
+ 	      case DBF_MTYPE_DBT4:
+ 		strncpy(fields[t].db_contents, (char *)dbffield, fields[t].db_flen);

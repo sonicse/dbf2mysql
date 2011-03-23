@@ -1,0 +1,19 @@
+
+This release of dbf2mysql adds a couple of unofficial patches.
+They are due to Christian Eyrich and Bart Friederichs.
+Apparently upstream is no more active, so I forked sources.
+
+I tagged debian release as 1.14a for this reason.
+
+According to Erik Bachmanns XBase File Format Description all M Field
+Types (including DBF_MTYPE_FPT) contain the block number as 10 digita
+ASCII text. So handling it in DBF_MTYPE_FPT files as long value as the
+current versions of dbf2mysql do is wrong. What Chris experienced with the
+FoxPro files here confirm this.
+
+Bart changed the dbf2mysql program to being able to enable the
+local-infile option, that is needed for MySQL > 3.23.49 and >4.0.2. Bart
+also added an -L option to the command that enables it. 
+It is tested and it works.
+
+-- Francesco P. Lovergine <frankie@debian.org>
