@@ -205,7 +205,7 @@ int main(int argc, char **argv) {
 	  
 	    dbf_add_field(dbh, qfield->name, 'N', 10, 0);
 	    if (verbose > 1) {
-	      printf("Adding field: %s, INT_TYPE, %d\n", qfield->name,
+	      printf("Adding field: %s, INT_TYPE, %zu\n", qfield->name,
 		     qfield->length);
 	    
 	    }

@@ -302,7 +302,7 @@ void do_create(MYSQL *SQLsock, char *table, dbhead *dbh, char *charset) {
     if (verbose > 2) {
         printf("Sending create-clause\n");
         printf("%s\n", query);
-        printf("fields in dbh %d, allocated mem for query %d, query size %d\n",
+        printf("fields in dbh %d, allocated mem for query %zu, query size %zu\n",
                 dbh->db_nfields, (dbh->db_nfields * 60) + 29 + strlen(table), strlen(query));
     }
 

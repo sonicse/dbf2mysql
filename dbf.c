@@ -531,7 +531,6 @@ int dbf_get_record(dbhead *dbh, field *fields,  u_long rec)
     u_int	daynum, leap_day, day_of_year, days_in_year;
     u_char 	*days_per_month;
     u_long	blknum;
-    char        *str_tmp;
 
 /* calculate at which offset we have to read. *DON'T* forget the
    0x0D which seperates field-descriptions from records!
@@ -570,7 +569,6 @@ int dbf_get_record(dbhead *dbh, field *fields,  u_long rec)
 	    }
             strncpy(fields[t].db_contents, (char *)dbffield, i);
 	    fields[t].db_contents[i] = '\0';
-            str_tmp = (char*)fields[t].db_contents;
 	    break;
 
 	  case 'B':		/* Binary data - 8 byte field - ???Endian Alert??? */
