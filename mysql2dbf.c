@@ -4,7 +4,7 @@
 */
 
 #define USE_OLD_FUNCTIONS
-
+#include "strtoupperlower.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -23,23 +23,7 @@ char	*table = NULL;
 char    *pass = NULL;
 char    *user = NULL;
 
-inline void strtoupper(char *string);
-inline void strtolower(char *string);
 void usage(void);
-
-inline void strtoupper(char *string) {
-        while(*string != '\0') {
-                *string = toupper(*string);
-		string++;
-        }
-}
-
-inline void strtolower(char *string) {
-        while(*string != '\0') {
-                *string = tolower(*string);
-		string++;
-        }
-}
 
 void usage(void) {
 	printf("mysql2dbf %s\n", VERSION);

@@ -11,6 +11,7 @@
       ( only those lines immediately affect by if(express) (and getopt) )
  */
 
+#include "strtoupperlower.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -39,26 +40,10 @@ char *convert = NULL;
 
 void do_onlyfields(char *flist, dbhead *dbh);
 void do_substitute(char *subarg, dbhead *dbh);
-inline void strtoupper(char *string);
-inline void strtolower(char *string);
 void do_create(MYSQL *, char*, dbhead*, char *charset);
 void do_inserts(MYSQL *, char*, dbhead*);
 int check_table(MYSQL *, char*);
 void usage(void);
-
-inline void strtoupper(char *string) {
-    while (*string != '\0') {
-        *string = toupper(*string);
-        string++;
-    }
-}
-
-inline void strtolower(char *string) {
-    while (*string != '\0') {
-        *string = tolower(*string);
-        string++;
-    }
-}
 
 int check_table(MYSQL *sock, char *table) {
     MYSQL_RES *result;
