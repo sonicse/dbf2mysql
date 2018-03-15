@@ -602,7 +602,7 @@ int dbf_get_record(dbhead *dbh, field *fields,  u_long rec)
 
 	  case 'Y':		/* Currency 8 byte field - ???Endian Alert??? */
 	    memcpy(&int8val, dbffield, sizeof(int8val));
-	    snprintf(fields[t].db_contents, fields[t].db_blen,  "%0*Ld",
+	    snprintf(fields[t].db_contents, fields[t].db_blen,  "%0*lld",
 		     fields[t].db_dec+1, int8val);
 	    fields[t].db_contents[fields[t].db_blen-1] = '\0';
 	    end = fields[t].db_contents + strlen(fields[t].db_contents) + 1;
