@@ -1,0 +1,5 @@
+*.o
+mysql2dbf
+dbf2mysql
+*.a
+
