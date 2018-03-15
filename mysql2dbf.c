@@ -189,7 +189,7 @@ int main(int argc, char **argv) {
 	  
 	    dbf_add_field(dbh, qfield->name, 'N', 10, 0);
 	    if (verbose > 1) {
-	      printf("Adding field: %s, INT_TYPE, %zu\n", qfield->name,
+	      printf("Adding field: %s, INT_TYPE, %ld\n", qfield->name,
 		     qfield->length);
 	    
 	    }
@@ -201,7 +201,7 @@ int main(int argc, char **argv) {
 	    dbf_add_field(dbh, qfield->name, 'N', qfield->length,
 			  qfield->decimals);
 	    if (verbose > 1) {
-	      printf("Adding field: %s, INT_REAL, %d\n", qfield->name,
+	      printf("Adding field: %s, INT_REAL, %ld\n", qfield->name,
 		     qfield->length);
 	    }
 	    break;
@@ -213,7 +213,7 @@ int main(int argc, char **argv) {
 	  case FIELD_TYPE_LONG_BLOB:
 	    dbf_add_field(dbh, qfield->name, 'C', qfield->length, 0);
 	    if (verbose > 1) {
-	      printf("Adding field: %s, INT_CHAR, %d\n", qfield->name,
+	      printf("Adding field: %s, INT_CHAR, %ld\n", qfield->name,
 		     qfield->length);
 	    }
 	    break;
@@ -221,7 +221,7 @@ int main(int argc, char **argv) {
 	  case FIELD_TYPE_TIMESTAMP:
 	    dbf_add_field(dbh, qfield->name, 'T', qfield->length, 0);
 	    if (verbose > 1) {
-	     printf("Adding field: %s, FIELD_TYPE_DATETIME, %d\n", qfield->name,
+	     printf("Adding field: %s, FIELD_TYPE_DATETIME, %ld\n", qfield->name,
 	        qfield->length);
 	    }
 	    break;
