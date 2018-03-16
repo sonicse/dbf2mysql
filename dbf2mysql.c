@@ -11,6 +11,7 @@
       ( only those lines immediately affect by if(express) (and getopt) )
  */
 
+#include "strtoupperlower.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -39,26 +40,10 @@ char *convert = NULL;
 
 void do_onlyfields(char *flist, dbhead *dbh);
 void do_substitute(char *subarg, dbhead *dbh);
-inline void strtoupper(char *string);
-inline void strtolower(char *string);
 void do_create(MYSQL *, char*, dbhead*, char *charset);
 void do_inserts(MYSQL *, char*, dbhead*);
 int check_table(MYSQL *, char*);
 void usage(void);
-
-inline void strtoupper(char *string) {
-    while (*string != '\0') {
-        *string = toupper(*string);
-        string++;
-    }
-}
-
-inline void strtolower(char *string) {
-    while (*string != '\0') {
-        *string = tolower(*string);
-        string++;
-    }
-}
 
 int check_table(MYSQL *sock, char *table) {
     MYSQL_RES *result;
@@ -302,7 +287,7 @@ void do_create(MYSQL *SQLsock, char *table, dbhead *dbh, char *charset) {
     if (verbose > 2) {
         printf("Sending create-clause\n");
         printf("%s\n", query);
-        printf("fields in dbh %d, allocated mem for query %d, query size %d\n",
+        printf("fields in dbh %d, allocated mem for query %zu, query size %zu\n",
                 dbh->db_nfields, (dbh->db_nfields * 60) + 29 + strlen(table), strlen(query));
     }
 

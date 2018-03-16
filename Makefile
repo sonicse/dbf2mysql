@@ -12,9 +12,9 @@ INSTALL=/usr/bin/install
 AR=ar
 
 # Set this to whatever your compiler accepts. Nothing special is needed
-#CFLAGS=-g -Wall -pedantic -include /usr/include/mpatrol.h
-CFLAGS=-g -Wall
-#CFLAGS=-O2 -Wall
+#CFLAGS:=-g -Wall -pedantic -include /usr/include/mpatrol.h
+CFLAGS:=-g -Wall
+#CFLAGS:=-O2 -Wall
 
 # Set this to make smaller binaries
 STRIP=
@@ -48,32 +48,26 @@ BZIP2=/usr/bin/bzip2
 VERSION=1.14
 USE_OLD_FUNCTIONS=1
 
-OBJS=dbf.o endian.o libdbf.a dbf2mysql.o mysql2dbf.o
+OBJS=dbf.o endian.o libdbf.a dbf2mysql.o mysql2dbf.o strtoupperlower.o
 
 all: dbf2mysql mysql2dbf
 
-libdbf.a: dbf.o endian.o
-	$(AR) rcs libdbf.a dbf.o endian.o
+libdbf.a: dbf.o endian.o strtoupperlower.o
+	$(AR) rcs libdbf.a $^
 
 dbf2mysql: dbf2mysql.o libdbf.a
-	$(CC) $(CFLAGS) $(STRIP) -L. $(MYSQLLIB) -o $@ dbf2mysql.o -ldbf \
+	$(CC) $(CFLAGS) $(STRIP) -L. $(MYSQLLIB) -o $@ $< -ldbf \
 		$(EXTRALIBS)
 
 mysql2dbf: mysql2dbf.o libdbf.a
-	$(CC) $(CFLAGS) $(STRIP) -L. $(MYSQLLIB) -o $@ mysql2dbf.o -ldbf \
+	$(CC) $(CFLAGS) $(STRIP) -L. $(MYSQLLIB) -o $@ $< -ldbf \
 		$(EXTRALIBS)
 
-dbf.o: dbf.c dbf.h
-	$(CC) $(CFLAGS) -c -o $@ dbf.c
+%.o: %.c
+	$(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" $(MYSQLINC) -c -o $@ $<
 
-endian.o: endian.c
-	$(CC) $(CFLAGS) -c -o $@ endian.c
-
-dbf2mysql.o: dbf2mysql.c dbf.h
-	$(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" $(MYSQLINC) -c -o $@ dbf2mysql.c
-
-mysql2dbf.o: mysql2dbf.c dbf.h
-	$(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" $(MYSQLINC) -c -o $@ mysql2dbf.c
+%.o: %.c %.h
+	$(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" $(MYSQLINC) -c -o $@ $<
 
 install: dbf2mysql
 	$(INSTALL) -m 0755 -s dbf2mysql $(INSTALLDIR)
